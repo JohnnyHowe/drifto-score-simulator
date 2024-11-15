@@ -15,6 +15,7 @@ def main():
     clock = pygame.time.Clock()
 
     running = True
+    paused = False
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -22,20 +23,23 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
+                if event.key == pygame.K_SPACE:
+                    paused = not paused
+                if event.key == pygame.K_r:
+                    car = Car()
 
         screen.fill((255, 255, 255))
         delta_time = clock.tick() / 1000
+        if paused: delta_time = 0
 
-        car.update(delta_time)
         car_size_pixels = (CAR_SIZE[0] * PIXELS_PER_GAME_UNIT, CAR_SIZE[1] * PIXELS_PER_GAME_UNIT)
         car_position_pixels = get_screen_position(car.position)
         draw_rectangle(screen, (car_position_pixels[0], car_position_pixels[1], car_size_pixels[0], car_size_pixels[1]), (0, 0, 0), car.rotation_rads * 180 / math.pi)
+        car.update(delta_time)
 
         car.current_input = 0
         if pygame.key.get_pressed()[pygame.K_a]: car.current_input -= 1
         if pygame.key.get_pressed()[pygame.K_d]: car.current_input += 1
-
-        draw_ray(screen, get_screen_position(car.position), car.forward() * PIXELS_PER_GAME_UNIT, (255, 0, 0))
 
         pygame.display.flip()
 
