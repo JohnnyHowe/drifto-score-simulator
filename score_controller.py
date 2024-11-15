@@ -1,3 +1,6 @@
+import math
+
+
 class ScoreController:
     base_score_multiplier = 0.2864789
     max_multiplier = 9
@@ -8,6 +11,7 @@ class ScoreController:
     max_multiplier_increase_per_second = 1
     car_surface_type_multiplier = 3.266666667
     multiplier_decrease_multiplier = 3
+    min_angle_for_drift_degrees = 5
 
     def __init__(self) -> None:
         self.score = 0
@@ -19,6 +23,7 @@ class ScoreController:
         self.update_multiplier(delta_time, angle, speed)
 
     def get_base_score_increase_this_frame(self, delta_time, angle, speed):
+        if abs(angle) < self.min_angle_for_drift_degrees * math.pi / 180: return 0
         return abs(angle) * speed * delta_time * self.base_score_multiplier * self.car_surface_type_multiplier
 
     def update_multiplier(self, delta_time, angle, speed):

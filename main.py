@@ -3,16 +3,24 @@ import pygame
 from pygame import Vector2
 from car import Car
 
-SCREEN_SIZE = Vector2(500, 500)
-PIXELS_PER_GAME_UNIT = 10
+SCREEN_SIZE = Vector2(1000, 1000)
+PIXELS_PER_GAME_UNIT = 4
 CAR_SIZE = Vector2(1, 2)
 
 
 def main():
-    car = Car()
+    cars = []
+    car_list = []
+    for turn_speed in [1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]:
+        car = Car()
+        car.current_input = turn_speed
+        car_list.append(car)
+    cars.append(car_list)
 
     screen = pygame.display.set_mode(SCREEN_SIZE)
     clock = pygame.time.Clock()
+    pygame.font.init()
+    font = pygame.font.SysFont('Arial', 10)
 
     running = True
     paused = False
@@ -25,21 +33,19 @@ def main():
                     running = False
                 if event.key == pygame.K_SPACE:
                     paused = not paused
-                if event.key == pygame.K_r:
-                    car = Car()
 
         screen.fill((255, 255, 255))
         delta_time = clock.tick() / 1000
         if paused: delta_time = 0
 
         car_size_pixels = (CAR_SIZE[0] * PIXELS_PER_GAME_UNIT, CAR_SIZE[1] * PIXELS_PER_GAME_UNIT)
-        car_position_pixels = get_screen_position(car.position)
-        draw_rectangle(screen, (car_position_pixels[0], car_position_pixels[1], car_size_pixels[0], car_size_pixels[1]), (0, 0, 0), car.rotation_rads * 180 / math.pi)
-        car.update(delta_time)
-
-        car.current_input = 0
-        if pygame.key.get_pressed()[pygame.K_a]: car.current_input -= 1
-        if pygame.key.get_pressed()[pygame.K_d]: car.current_input += 1
+        for car_list in cars:
+            for car in car_list:
+                car_position_pixels = get_screen_position(car.position)
+                draw_rectangle(screen, (car_position_pixels[0], car_position_pixels[1], car_size_pixels[0], car_size_pixels[1]), (0, 0, 0), car.rotation_rads * 180 / math.pi)
+                car.update(delta_time)
+                text_surface = font.render(str(round(car.score_controller.score)), True, (0, 0, 0))
+                screen.blit(text_surface, get_screen_position(car.position))
 
         pygame.display.flip()
 
