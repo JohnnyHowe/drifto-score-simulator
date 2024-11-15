@@ -1,6 +1,8 @@
 import math
 from pygame import Vector2
 
+from score_controller import ScoreController
+
 
 class Car:
     # game object things
@@ -22,6 +24,7 @@ class Car:
     def __init__(self):
         self.position = Vector2(0, 0)
         self.velocity = Vector2(0, 0)
+        self.score_controller = ScoreController()
 
     def update(self, delta_time):
         self.apply_friction(delta_time)
@@ -29,6 +32,7 @@ class Car:
         self.rotational_velocity = self.steering_speed * self.current_input
         self.position += self.velocity * delta_time
         self.rotation_rads += self.rotational_velocity * delta_time
+        self.score_controller.update(delta_time, self.get_signed_slip_angle_rads(), self.velocity.magnitude())
 
     def apply_friction(self, delta_time):
         slip_angle = self.get_signed_slip_angle_rads()
@@ -46,7 +50,6 @@ class Car:
         # is_reverse_drift = abs(slip_angle) > 90 * (180 / math.pi)
         is_reverse_drift = False
         drift_direction = 1 if slip_angle > 0 else -1
-        print(slip_angle)
         local_horizontal_velocity = self.velocity
         global_friction_direction = (local_horizontal_velocity * -1 if is_reverse_drift else self.right() * drift_direction).normalize()
         instant_friction_acceleration = global_friction_direction * instant_friction_acceleration_unsigned
