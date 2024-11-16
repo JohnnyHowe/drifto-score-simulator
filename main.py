@@ -6,14 +6,19 @@ from car import Car
 SCREEN_SIZE = Vector2(1000, 1000)
 PIXELS_PER_GAME_UNIT = 4
 CAR_SIZE = Vector2(1, 2)
+N_ANGLES = 50
 
 
 def main():
+    angles = []
+    for i in range(N_ANGLES):
+        angles.append((i + 1) / N_ANGLES)
+
     cars = []
     car_list = []
-    for turn_speed in [1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]:
+    for angle in angles:
         car = Car()
-        car.current_input = turn_speed
+        car.current_input = angle 
         car_list.append(car)
     cars.append(car_list)
 
@@ -23,7 +28,7 @@ def main():
     font = pygame.font.SysFont('Arial', 10)
 
     running = True
-    paused = False
+    paused = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -35,7 +40,8 @@ def main():
                     paused = not paused
 
         screen.fill((255, 255, 255))
-        delta_time = clock.tick() / 1000
+        # delta_time = clock.tick() / 1000
+        delta_time = 1 / 60
         if paused: delta_time = 0
 
         car_size_pixels = (CAR_SIZE[0] * PIXELS_PER_GAME_UNIT, CAR_SIZE[1] * PIXELS_PER_GAME_UNIT)
@@ -44,7 +50,7 @@ def main():
                 car_position_pixels = get_screen_position(car.position)
                 draw_rectangle(screen, (car_position_pixels[0], car_position_pixels[1], car_size_pixels[0], car_size_pixels[1]), (0, 0, 0), car.rotation_rads * 180 / math.pi)
                 car.update(delta_time)
-                text_surface = font.render(str(round(car.score_controller.score)), True, (0, 0, 0))
+                text_surface = font.render(str(round(car.score_controller.score)), False, (0, 0, 0))
                 screen.blit(text_surface, get_screen_position(car.position))
 
         pygame.display.flip()
