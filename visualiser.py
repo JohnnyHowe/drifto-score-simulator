@@ -6,7 +6,7 @@ from pygame import Vector2
 
 class Visualiser:
     def __init__(self, simulation) -> None:
-        self.pixels_per_game_unit = 4
+        self.pixels_per_game_unit = 6
         self.car_size = Vector2(1, 2)
         self.screen_size = Vector2(1000, 1000)
         self.screen = pygame.display.set_mode(self.screen_size)
@@ -43,7 +43,7 @@ class Visualiser:
         car_size_pixels = self.car_size * self.pixels_per_game_unit 
         car_position_pixels = self.get_screen_position(car.position)
         self.draw_rectangle((car_position_pixels[0], car_position_pixels[1], car_size_pixels[0], car_size_pixels[1]), (0, 0, 0), car.rotation_rads * 180 / math.pi)
-        text_surface = self.font.render(str(round(car.score_controller.score)), False, (0, 0, 0))
+        text_surface = self.font.render(str((car.name)), False, (0, 0, 0))
         self.screen.blit(text_surface, self.get_screen_position(car.position))
 
     def get_screen_position(self, world_position):

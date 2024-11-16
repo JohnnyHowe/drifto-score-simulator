@@ -1,25 +1,28 @@
 from car import Car
+from car_loader import load_from_csv
 
 
 class Simulation:
-    n_angles = 100
+    n_angles = 1
 
-    def __init__(self) -> None:
-        self.create_cars()
+    def __init__(self, cars_file) -> None:
+        self.create_cars(cars_file)
         self.delta_time = 1 / 60
 
-    def create_cars(self):
+    def create_cars(self, cars_file):
         angles = []
         for i in range(self.n_angles):
             angles.append((i + 1) / self.n_angles)
 
         self.cars = {}
-        car_list = []
-        for angle in angles:
-            car = Car()
-            car.current_input = angle
-            car_list.append(car)
-        self.cars["ae86"] = car_list
+
+        for base_car in load_from_csv(cars_file):
+            car_list = []
+            for angle in angles:
+                car = base_car.get_copy()
+                car.current_input = angle
+                car_list.append(car)
+            self.cars[car.name] = car_list
 
     def update(self):
         for (name, cars) in self.cars.items():

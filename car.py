@@ -20,11 +20,24 @@ class Car:
     max_friction = 30
     # other
     current_input = 0
+    name = "Unnamed"
 
     def __init__(self):
         self.position = Vector2(0, 0)
         self.velocity = Vector2(0, 0)
         self.score_controller = ScoreController()
+
+    def get_copy(self):
+        car = Car()
+        car.steering_speed = self.steering_speed
+        car.constant_friction = self.constant_friction
+        car.linear_friction = self.linear_friction
+        car.squared_friction = self.squared_friction
+        car.max_speed = self.max_speed
+        car.max_acceleration = self.max_acceleration
+        car.max_friction = self.max_friction
+        car.name = self.name
+        return car
 
     def update(self, delta_time):
         self.apply_friction(delta_time)
